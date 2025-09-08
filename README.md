@@ -1,5 +1,13 @@
 # Automatic Mandala Coloring PDF Generator
 
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/6665a99c29b14b87bddd3ac553c13bf9)](https://app.codacy.com/gh/R0mb0/Mandala_coloring_PDF_generator/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
+
+[![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/R0mb0/Batch_PDF_OCR_Processor)
+[![Open Source Love svg3](https://badges.frapsoft.com/os/v3/open-source.svg?v=103)](https://github.com/R0mb0/Batch_PDF_OCR_Processor)
+[![Donate](https://img.shields.io/badge/PayPal-Donate%20to%20Author-blue.svg)](http://paypal.me/R0mb0)
+
+[![licensebuttons by-nc-sa](https://licensebuttons.net/l/by-nc-sa/3.0/88x31.png)](https://creativecommons.org/licenses/by-nc-sa/4.0)
+
 Generate beautiful, printable mandalas for coloring, perfectly formatted as PDFs for A4 paper.  
 All layout, margins, and centering are handled automatically.
 
@@ -112,6 +120,13 @@ See [`config-parameters.md`](config-parameters.md) for a full description of eac
 
 ---
 
-## Support
+Shield: [![CC BY-NC-SA 4.0][cc-by-nc-sa-shield]][cc-by-nc-sa]
 
-Open an issue on GitHub or contact the author for help, suggestions, or feature requests!
+This work is licensed under a
+[Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License][cc-by-nc-sa].
+
+[![CC BY-NC-SA 4.0][cc-by-nc-sa-image]][cc-by-nc-sa]
+
+[cc-by-nc-sa]: http://creativecommons.org/licenses/by-nc-sa/4.0/
+[cc-by-nc-sa-image]: https://licensebuttons.net/l/by-nc-sa/4.0/88x31.png
+[cc-by-nc-sa-shield]: https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg
