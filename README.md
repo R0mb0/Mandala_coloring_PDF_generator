@@ -13,6 +13,16 @@ All layout, margins, and centering are handled automatically.
 
 ---
 
+## Preview
+
+<div align="center">
+
+[![preview](https://github.com/R0mb0/Mandala_coloring_PDF_generator/blob/main/ReadMe_Imgs/Mandala.png)](https://github.com/R0mb0/Mandala_coloring_PDF_generator/tree/main/Example_images)
+
+</div>
+
+---
+
 ## Features
 
 - **Perfect PDF layout for A4:** Mandalas are always centered and never cropped.
