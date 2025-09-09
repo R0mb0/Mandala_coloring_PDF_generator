@@ -6,7 +6,7 @@
 [![Open Source Love svg3](https://badges.frapsoft.com/os/v3/open-source.svg?v=103)](https://github.com/R0mb0/Batch_PDF_OCR_Processor)
 [![Donate](https://img.shields.io/badge/PayPal-Donate%20to%20Author-blue.svg)](http://paypal.me/R0mb0)
 
-[![licensebuttons by-nc-sa](https://licensebuttons.net/l/by-nc-sa/3.0/88x31.png)](https://creativecommons.org/licenses/by-nc-sa/4.0)
+[![CC BY-NC-SA 4.0][cc-by-nc-sa-shield]](https://creativecommons.org/licenses/by-nc-sa/4.0)
 
 Generate beautiful, printable mandalas for coloring, perfectly formatted as PDFs for A4 paper.  
 All layout, margins, and centering are handled automatically.
