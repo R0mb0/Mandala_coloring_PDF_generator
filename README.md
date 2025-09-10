@@ -43,14 +43,18 @@ All layout, margins, and centering are handled automatically.
 - **LaTeX** (pdflatex)
 - **Python packages:** matplotlib, numpy
 
-#### Linux (Debian/Ubuntu)
+---
+
+### Linux (Debian/Ubuntu)
 
 ```sh
 sudo apt update
 sudo apt install python3 python3-pip texlive-latex-base texlive-latex-extra -y
 ```
 
-#### Windows
+---
+
+### Windows
 
 Install [Chocolatey](https://chocolatey.org/install) (Windows package manager), then:
 
@@ -59,7 +63,54 @@ choco install python3 -y
 choco install miktex -y
 ```
 
-#### Mac
+#### **Common pip issues on Windows**
+
+If after installing Python via Chocolatey `pip` does **not work** or is **not found**, follow these steps:
+
+1. **Check if pip is available:**
+    ```sh
+    where pip
+    ```
+    If no result, pip is not installed or not in PATH.
+
+2. **Try running pip via Python:**
+    ```sh
+    python -m pip --version
+    ```
+    If this shows an error, pip is likely missing.
+
+3. **Manual pip installation:**
+    - Download the official [get-pip.py](https://bootstrap.pypa.io/get-pip.py) script and save it to your computer.
+    - Open a Command Prompt in the folder where you saved the script.
+    - Run:
+      ```sh
+      python get-pip.py
+      ```
+    - This will install pip.
+
+4. **Add pip to PATH (if still not found):**
+    - Locate where pip was installed, typically in:
+      ```
+      C:\Users\<YOUR_USER>\AppData\Local\Programs\Python\Python3x\Scripts\
+      ```
+    - Add this folder to your system's PATH:
+      - Open "Edit environment variables" in Windows.
+      - Add the above path to the `PATH` variable and restart the Command Prompt.
+
+5. **Test pip:**
+    ```sh
+    pip --version
+    ```
+    or
+    ```sh
+    python -m pip --version
+    ```
+
+If you still have issues, pip can always be used with the `python -m pip ...` syntax!
+
+---
+
+### Mac
 
 Install [Homebrew](https://brew.sh/) (Mac package manager), then:
 
@@ -68,7 +119,9 @@ brew install python
 brew install --cask mactex
 ```
 
-#### Python packages
+---
+
+### Python packages
 
 ```sh
 pip install -r requirements.txt
@@ -127,6 +180,7 @@ See [`config-parameters.md`](config-parameters.md) for a full description of eac
 - **Missing dependencies:** The script will show install instructions for your OS.
 - **LaTeX errors:** Make sure `pdflatex` is installed and in your PATH.
 - **Images not centered:** Check your LaTeX installation and make sure you're using the latest version of the code.
+- **Windows pip issue:** See the detailed guide in the Windows installation section above.
 
 ---
 
