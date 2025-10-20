@@ -18,7 +18,6 @@ def centroid(points):
     return arr.mean(axis=0)
 
 def point_in_polygon(point, polygon):
-    # Ray casting algorithm for point in polygon
     x, y = point
     poly = np.array(polygon)
     n = len(poly)
@@ -36,26 +35,21 @@ def point_in_polygon(point, polygon):
         px1, py1 = px2, py2
     return inside
 
-def draw_flower(ax, center, r, lw, color_list=None):
+def next_number(used):
+    # Returns the next unused integer > 0
+    n = 1
+    while n in used:
+        n += 1
+    return n
+
+def draw_flower(ax, center, r, lw, color_list=None, color_hint_mode="none", color_map=None):
     circle = Circle(center, r*0.18, edgecolor='black', facecolor='none', lw=lw)
     ax.add_patch(circle)
-    if color_list:
-        txt = ax.text(center[0], center[1], np.random.choice(color_list),
-                fontsize=max(r*13, 10), color='black',
-                ha='center', va='center', weight='bold', zorder=10, clip_on=True)
-        txt.set_path_effects([path_effects.Stroke(linewidth=1.8, foreground='white'), path_effects.Normal()])
-
     for i in np.linspace(0.4, 1.0, 3):
         c_center = center
         c_radius = r*i
         c = Circle(c_center, c_radius, edgecolor='black', facecolor='none', lw=lw)
         ax.add_patch(c)
-        if color_list:
-            txt = ax.text(c_center[0], c_center[1] + c_radius - 0.03, np.random.choice(color_list),
-                    fontsize=max(c_radius*8, 8), color='black',
-                    ha='center', va='center', weight='bold', zorder=10, clip_on=True)
-            txt.set_path_effects([path_effects.Stroke(linewidth=1.5, foreground='white'), path_effects.Normal()])
-
     num_petals = np.random.choice([10, 12, 14, 16, 18, 20, 24])
     angles = np.linspace(0, 2*np.pi, num_petals, endpoint=False)
     for t in angles:
@@ -74,13 +68,27 @@ def draw_flower(ax, center, r, lw, color_list=None):
             lw=lw
         )
         ax.add_patch(petal)
-        if color_list:
-            txt = ax.text(petal_center[0], petal_center[1], np.random.choice(color_list),
-                    fontsize=max(petal_height*18, 9), color='black',
-                    ha='center', va='center', weight='bold', zorder=10, rotation=np.degrees(t), clip_on=True)
-            txt.set_path_effects([path_effects.Stroke(linewidth=1.2, foreground='white'), path_effects.Normal()])
+    # Hints (center + petals)
+    if color_list and color_hint_mode != "none":
+        hint_targets = [center] + [(
+            center[0] + np.cos(t)*r*0.6, center[1] + np.sin(t)*r*0.6
+        ) for t in angles]
+        for idx, pos in enumerate(hint_targets):
+            color = np.random.choice(color_list)
+            if color_hint_mode == "name":
+                txt_hint = color
+            elif color_hint_mode == "number":
+                if color not in color_map:
+                    color_map[color] = next_number(set(color_map.values()))
+                txt_hint = str(color_map[color])
+            else:
+                continue
+            txt = ax.text(pos[0], pos[1], txt_hint,
+                fontsize=max(r*13 if idx==0 else r*8, 9), color='black',
+                ha='center', va='center', weight='bold', zorder=10, clip_on=True)
+            txt.set_path_effects([path_effects.Stroke(linewidth=1.5, foreground='white'), path_effects.Normal()])
 
-def draw_spiral(ax, center, r, lw, color_list=None):
+def draw_spiral(ax, center, r, lw, color_list=None, color_hint_mode="none", color_map=None):
     n_turns = np.random.randint(4, 9)
     theta = np.linspace(0, n_turns * 2 * np.pi, 120)
     a = r*0.18
@@ -91,17 +99,26 @@ def draw_spiral(ax, center, r, lw, color_list=None):
     for i in np.linspace(0.4, 1.0, 3):
         c = Circle(center, r*i, edgecolor='black', facecolor='none', lw=lw)
         ax.add_patch(c)
-    if color_list:
+    if color_list and color_hint_mode != "none":
         n_colors = np.random.randint(1, 4)
         steps = np.linspace(0.15, 0.85, n_colors)
-        for idx, s in enumerate(steps):
+        for s in steps:
             idx_pt = int(s * len(theta))
-            txt = ax.text(x[idx_pt], y[idx_pt], np.random.choice(color_list),
+            color = np.random.choice(color_list)
+            if color_hint_mode == "name":
+                txt_hint = color
+            elif color_hint_mode == "number":
+                if color not in color_map:
+                    color_map[color] = next_number(set(color_map.values()))
+                txt_hint = str(color_map[color])
+            else:
+                continue
+            txt = ax.text(x[idx_pt], y[idx_pt], txt_hint,
                 fontsize=max(r*11, 9), color='black',
                 ha='center', va='center', weight='bold', zorder=10)
             txt.set_path_effects([path_effects.Stroke(linewidth=1.3, foreground='white'), path_effects.Normal()])
 
-def draw_leaf(ax, center, r, lw, color_list=None):
+def draw_leaf(ax, center, r, lw, color_list=None, color_hint_mode="none", color_map=None):
     num_leaves = np.random.choice([3, 4, 5])
     angles = np.linspace(0, 2*np.pi, num_leaves, endpoint=False)
     for t in angles:
@@ -121,20 +138,38 @@ def draw_leaf(ax, center, r, lw, color_list=None):
         )
         ax.add_patch(leaf)
         ax.plot([center[0], leaf_center[0]], [center[1], leaf_center[1]], color='black', lw=lw*0.5)
-        if color_list:
-            txt = ax.text(leaf_center[0], leaf_center[1], np.random.choice(color_list),
+        if color_list and color_hint_mode != "none":
+            color = np.random.choice(color_list)
+            if color_hint_mode == "name":
+                txt_hint = color
+            elif color_hint_mode == "number":
+                if color not in color_map:
+                    color_map[color] = next_number(set(color_map.values()))
+                txt_hint = str(color_map[color])
+            else:
+                continue
+            txt = ax.text(leaf_center[0], leaf_center[1], txt_hint,
                 fontsize=max(leaf_height*12, 8), color='black',
                 ha='center', va='center', weight='bold', zorder=10, rotation=np.degrees(t), clip_on=True)
             txt.set_path_effects([path_effects.Stroke(linewidth=1.0, foreground='white'), path_effects.Normal()])
     circle = Circle(center, r*0.13, edgecolor='black', facecolor='none', lw=lw)
     ax.add_patch(circle)
-    if color_list:
-        txt = ax.text(center[0], center[1], np.random.choice(color_list),
+    if color_list and color_hint_mode != "none":
+        color = np.random.choice(color_list)
+        if color_hint_mode == "name":
+            txt_hint = color
+        elif color_hint_mode == "number":
+            if color not in color_map:
+                color_map[color] = next_number(set(color_map.values()))
+            txt_hint = str(color_map[color])
+        else:
+            return
+        txt = ax.text(center[0], center[1], txt_hint,
             fontsize=max(r*9, 7), color='black',
             ha='center', va='center', weight='bold', zorder=10)
         txt.set_path_effects([path_effects.Stroke(linewidth=1.2, foreground='white'), path_effects.Normal()])
 
-def draw_ray_mandala(ax, center, r, lw, color_list=None):
+def draw_ray_mandala(ax, center, r, lw, color_list=None, color_hint_mode="none", color_map=None):
     num_rays = np.random.choice([20, 24, 28, 32])
     angles = np.linspace(0, 2*np.pi, num_rays, endpoint=False)
     for t in angles:
@@ -154,8 +189,17 @@ def draw_ray_mandala(ax, center, r, lw, color_list=None):
     for i in np.linspace(0.33, 1.0, 4):
         c = Circle(center, r*i, edgecolor='black', facecolor='none', lw=lw)
         ax.add_patch(c)
-    if color_list:
-        txt = ax.text(center[0], center[1], np.random.choice(color_list),
+    if color_list and color_hint_mode != "none":
+        color = np.random.choice(color_list)
+        if color_hint_mode == "name":
+            txt_hint = color
+        elif color_hint_mode == "number":
+            if color not in color_map:
+                color_map[color] = next_number(set(color_map.values()))
+            txt_hint = str(color_map[color])
+        else:
+            return
+        txt = ax.text(center[0], center[1], txt_hint,
             fontsize=max(r*15, 11), color='black',
             ha='center', va='center', weight='bold', zorder=10)
         txt.set_path_effects([path_effects.Stroke(linewidth=1.5, foreground='white'), path_effects.Normal()])
@@ -166,12 +210,21 @@ def draw_ray_mandala(ax, center, r, lw, color_list=None):
             dy = np.sin(ang)
             ext_x = center[0] + dx * r * 0.85
             ext_y = center[1] + dy * r * 1.10
-            txt = ax.text(ext_x, ext_y, np.random.choice(color_list),
+            color = np.random.choice(color_list)
+            if color_hint_mode == "name":
+                txt_hint = color
+            elif color_hint_mode == "number":
+                if color not in color_map:
+                    color_map[color] = next_number(set(color_map.values()))
+                txt_hint = str(color_map[color])
+            else:
+                continue
+            txt = ax.text(ext_x, ext_y, txt_hint,
                 fontsize=max(r*10, 8), color='black',
                 ha='center', va='center', weight='bold', zorder=10)
             txt.set_path_effects([path_effects.Stroke(linewidth=1.3, foreground='white'), path_effects.Normal()])
 
-def draw_geometric_mandala(ax, center, r_max, lw, color_list=None):
+def draw_geometric_mandala(ax, center, r_max, lw, color_list=None, color_hint_mode="none", color_map=None):
     levels = np.random.randint(4, 7)
     shapes_drawn = []
     for level in range(1, levels+1):
@@ -237,14 +290,23 @@ def draw_geometric_mandala(ax, center, r_max, lw, color_list=None):
     ax.set_xlim(x_min-margin, x_max+margin)
     ax.set_ylim(y_min-margin, y_max+margin)
 
-    if color_list:
+    if color_list and color_hint_mode != "none":
         for shape in shapes_drawn:
             if shape[0] == 'polygon' or shape[0] == 'triangle':
                 pts = shape[1]
                 cx, cy = centroid(pts)
                 if point_in_polygon((cx, cy), pts) and \
                    (x_min+margin < cx < x_max-margin) and (y_min+margin < cy < y_max-margin):
-                    txt = ax.text(cx, cy, np.random.choice(color_list),
+                    color = np.random.choice(color_list)
+                    if color_hint_mode == "name":
+                        txt_hint = color
+                    elif color_hint_mode == "number":
+                        if color not in color_map:
+                            color_map[color] = next_number(set(color_map.values()))
+                        txt_hint = str(color_map[color])
+                    else:
+                        continue
+                    txt = ax.text(cx, cy, txt_hint,
                         fontsize=9, color='black',
                         ha='center', va='center', weight='bold', zorder=10, clip_on=True)
                     txt.set_path_effects([path_effects.Stroke(linewidth=1.2, foreground='white'), path_effects.Normal()])
@@ -252,15 +314,34 @@ def draw_geometric_mandala(ax, center, r_max, lw, color_list=None):
                 cx, cy = shape[1]
                 angle = shape[4]
                 if (x_min+margin < cx < x_max-margin) and (y_min+margin < cy < y_max-margin):
-                    txt = ax.text(cx, cy, np.random.choice(color_list),
+                    color = np.random.choice(color_list)
+                    if color_hint_mode == "name":
+                        txt_hint = color
+                    elif color_hint_mode == "number":
+                        if color not in color_map:
+                            color_map[color] = next_number(set(color_map.values()))
+                        txt_hint = str(color_map[color])
+                    else:
+                        continue
+                    txt = ax.text(cx, cy, txt_hint,
                         fontsize=9, color='black',
                         ha='center', va='center', weight='bold', zorder=10, rotation=angle, clip_on=True)
                     txt.set_path_effects([path_effects.Stroke(linewidth=1.0, foreground='white'), path_effects.Normal()])
         if (x_min+margin < center[0] < x_max-margin) and (y_min+margin < center[1] < y_max-margin):
-            txt = ax.text(center[0], center[1], np.random.choice(color_list),
-                fontsize=10, color='black',
-                ha='center', va='center', weight='bold', zorder=10)
-            txt.set_path_effects([path_effects.Stroke(linewidth=1.8, foreground='white'), path_effects.Normal()])
+            color = np.random.choice(color_list)
+            if color_hint_mode == "name":
+                txt_hint = color
+            elif color_hint_mode == "number":
+                if color not in color_map:
+                    color_map[color] = next_number(set(color_map.values()))
+                txt_hint = str(color_map[color])
+            else:
+                txt_hint = None
+            if txt_hint:
+                txt = ax.text(center[0], center[1], txt_hint,
+                    fontsize=10, color='black',
+                    ha='center', va='center', weight='bold', zorder=10)
+                txt.set_path_effects([path_effects.Stroke(linewidth=1.8, foreground='white'), path_effects.Normal()])
 
 def flower_can_fit(new_center, new_r, centers, radii, min_overlap=0.32):
     for (c, r) in zip(centers, radii):
@@ -270,7 +351,7 @@ def flower_can_fit(new_center, new_r, centers, radii, min_overlap=0.32):
             return False
     return True
 
-def generate_mandala_image(output_path, write_color_names=False, color_mode="advanced", mandala_style="random", mandala_max_radius=1.35):
+def generate_mandala_image(output_path, color_hint_mode="none", color_mode="advanced", mandala_style="random", mandala_max_radius=1.35):
     if color_mode == "basic":
         color_list = COLOR_NAMES_BASIC
     else:
@@ -279,12 +360,17 @@ def generate_mandala_image(output_path, write_color_names=False, color_mode="adv
     fig, ax = plt.subplots(figsize=(7.7, 10.2), dpi=150)
     ax.set_aspect('equal')
     ax.axis('off')
+    color_map = {}  # color name -> number
 
     if mandala_style == "geometric":
         center = (0, 0)
         r_max = mandala_max_radius
         lw = np.random.uniform(1.7, 2.2)
-        draw_geometric_mandala(ax, center, r_max, lw, color_list if write_color_names else None)
+        draw_geometric_mandala(
+            ax, center, r_max, lw,
+            color_list=color_list if color_hint_mode != "none" else None,
+            color_hint_mode=color_hint_mode, color_map=color_map
+        )
     else:
         min_elements = 14
         max_elements = 22
@@ -327,8 +413,19 @@ def generate_mandala_image(output_path, write_color_names=False, color_mode="adv
             r = radii[i]
             lw = np.random.uniform(1.4, 2.1)
             shape_fn = np.random.choice(shape_functions)
-            shape_fn(ax, center, r, lw, color_list if write_color_names else None)
+            shape_fn(
+                ax, center, r, lw,
+                color_list=color_list if color_hint_mode != "none" else None,
+                color_hint_mode=color_hint_mode, color_map=color_map
+            )
 
     plt.tight_layout(pad=0)
     fig.savefig(output_path, transparent=True, bbox_inches='tight', pad_inches=0)
     plt.close(fig)
+
+    # If number mode, return the legend mapping (sorted by number)
+    if color_hint_mode == "number" and len(color_map) > 0:
+        legend = sorted([(num, color) for color, num in color_map.items()], key=lambda x: x[0])
+        return legend
+    else:
+        return None

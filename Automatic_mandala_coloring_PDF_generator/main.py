@@ -107,10 +107,11 @@ def get_next_pdf_filename(output_dir):
 def ask_config_interactive():
     print("\n--- MANUAL CONFIGURATION ---")
     print("Example configuration:")
-    print('{"write_color_names": true, "color_mode": "advanced", "batch_count": 2, "mandala_style": "geometric", "mandala_max_radius": 1.42}\n')
+    print('{"color_hint_mode": "number", "color_mode": "advanced", "batch_count": 2, "mandala_style": "geometric", "mandala_max_radius": 1.42}\n')
 
-    write_color_names = input("Do you want color names written in each closed area? [true/false]: ").strip().lower()
-    write_color_names = write_color_names == "true"
+    color_hint_mode = input("How do you want coloring hints? [none/name/number]: ").strip().lower()
+    if color_hint_mode not in ["none", "name", "number"]:
+        color_hint_mode = "none"
 
     color_mode = input("Which color list to use? [basic/advanced] (example: advanced): ").strip().lower()
     if color_mode not in ["basic", "advanced"]:
@@ -132,7 +133,7 @@ def ask_config_interactive():
             mandala_max_radius = 1.35
 
     config = {
-        "write_color_names": write_color_names,
+        "color_hint_mode": color_hint_mode,
         "color_mode": color_mode,
         "batch_count": batch_count,
         "mandala_style": mandala_style,
@@ -147,6 +148,16 @@ def save_config_json(config, path="config.json"):
 def load_config_json(path="config.json"):
     with open(path, "r", encoding="utf-8") as f:
         return json.load(f)
+
+def convert_legacy_config(config):
+    # Convert legacy config to new config style
+    if "color_hint_mode" not in config:
+        if "write_color_names" in config:
+            color_hint_mode = "name" if config["write_color_names"] else "none"
+        else:
+            color_hint_mode = "none"
+        config["color_hint_mode"] = color_hint_mode
+    return config
 
 def main():
     print("=== AUTOMATIC MANDALA COLORING PDF GENERATOR ===")
@@ -164,11 +175,13 @@ def main():
         save_config_json(config, CONFIG_FILE)
         print(f"[INFO] Configuration saved in {CONFIG_FILE}.")
 
+    config = convert_legacy_config(config)
+
     from mandala_generator import generate_mandala_image
     from latex_tools import create_latex_file, compile_latex_pdf
 
     batch_count = config.get("batch_count", 1)
-    write_color_names = config.get("write_color_names", False)
+    color_hint_mode = config.get("color_hint_mode", "none")
     color_mode = config.get("color_mode", "basic")
     mandala_style = config.get("mandala_style", "random")
     mandala_max_radius = config.get("mandala_max_radius", 1.35)
@@ -178,13 +191,16 @@ def main():
     for i in range(batch_count):
         ensure_dirs()
         print(f"[INFO] Generating mandala {i+1}/{batch_count}...")
-        generate_mandala_image(MANDALA_IMAGE,
-                              write_color_names=write_color_names,
-                              color_mode=color_mode,
-                              mandala_style=mandala_style,
-                              mandala_max_radius=mandala_max_radius)
-        create_latex_file(MANDALA_IMAGE, LATEX_FILE)
-
+        legend = None
+        # generate_mandala_image will return legend if color_hint_mode == "number"
+        legend = generate_mandala_image(
+            MANDALA_IMAGE,
+            color_hint_mode=color_hint_mode,
+            color_mode=color_mode,
+            mandala_style=mandala_style,
+            mandala_max_radius=mandala_max_radius
+        )
+        create_latex_file(MANDALA_IMAGE, LATEX_FILE, legend=legend)
         pdf_filename = get_next_pdf_filename(OUTPUT_DIR)
         pdf_output = os.path.join(OUTPUT_DIR, pdf_filename)
         print(f"[INFO] Compiling PDF with LaTeX ({pdf_filename})...")
