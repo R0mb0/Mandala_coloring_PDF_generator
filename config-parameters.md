@@ -102,5 +102,3 @@ Run the script again to use new settings.
 - `"seed"`: for reproducible random generation.
 
 ---
-
-**Need more options? Request a feature!**
