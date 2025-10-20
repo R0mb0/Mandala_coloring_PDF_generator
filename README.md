@@ -152,11 +152,11 @@ Example:
 
 ```json
 {
-    "write_color_names": true,
-    "color_mode": "advanced",
-    "batch_count": 3,
-    "mandala_style": "geometric",
-    "mandala_max_radius": 1.42
+"color_hint_mode": "number",
+"color_mode": "advanced",
+"batch_count": 2,
+"mandala_style": "geometric",
+"mandala_max_radius": 1.32
 }
 ```
 
