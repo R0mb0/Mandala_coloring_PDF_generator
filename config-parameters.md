@@ -12,7 +12,7 @@ Below is a full explanation of every configuration option you can use in `config
     "color_mode": "advanced",
     "batch_count": 2,
     "mandala_style": "geometric",
-    "mandala_max_radius": 1.42
+    "mandala_max_radius": 1.32
 }
 ```
 
