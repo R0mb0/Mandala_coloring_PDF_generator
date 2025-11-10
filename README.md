@@ -19,6 +19,8 @@ All layout, margins, and centering are handled automatically.
 
 [![preview](https://github.com/R0mb0/Mandala_coloring_PDF_generator/blob/main/ReadMe_Imgs/Mandala.png)](https://github.com/R0mb0/Mandala_coloring_PDF_generator/tree/main/Example_images)
 
+See [`Example_images`](https://github.com/R0mb0/Mandala_coloring_PDF_generator/blob/main/Example_images/ReadMe.md) to see more examples.
+
 </div>
 
 ---
