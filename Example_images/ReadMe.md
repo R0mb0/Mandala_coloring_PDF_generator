@@ -5,5 +5,5 @@
 ![Mandala 3](./3.png)
 ![Mandala 4](./4.png)
 ![Mandala 5](./5.png)
-![Mandala 4](./6.png)
-![Mandala 5](./7.png)
+![Mandala 6](./6.png)
+![Mandala 7](./7.png)
