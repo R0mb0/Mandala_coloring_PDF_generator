@@ -1,5 +1,5 @@
 {
-    "color_hint_mode": "number",
+    "color_hint_mode": "none",
     "color_mode": "advanced",
     "batch_count": 10,
     "mandala_style": "easy_mandala",
