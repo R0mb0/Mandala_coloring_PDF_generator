@@ -8,10 +8,10 @@ Below is a full explanation of every configuration option you can use in `config
 
 ```json
 {
-    "write_color_names": true,
+    "color_hint_mode": "number",
     "color_mode": "advanced",
     "batch_count": 2,
-    "mandala_style": "geometric",
+    "mandala_style": "easy_mandala",
     "mandala_max_radius": 1.42
 }
 ```
@@ -20,21 +20,21 @@ Below is a full explanation of every configuration option you can use in `config
 
 ## Parameters
 
-### 1. `write_color_names`
-- **Type:** boolean (`true` or `false`)
+### 1. `color_hint_mode`
+- **Type:** string (`"none"`, `"name"`, or `"number"`)
 - **Description:**  
-  If `true`, a color name will be printed inside every closed area (petal, polygon, circle).  
-  Useful for educational purposes or guided coloring.
-- **Values:**
-  - `true`: show color names in every area.
-  - `false`: do not show color names.
+  Controls how coloring hints appear inside the mandala areas:
+  - `"none"`: no hint
+  - `"name"`: a color name is printed inside every closed area
+  - `"number"`: a number is printed in every area, and a legend table (number ↔ color name) is added to the PDF.  
+    The legend will be placed at the bottom left of the page, with a horizontal layout (max 5 columns per row), wrapping to additional rows as needed.
 
 ---
 
 ### 2. `color_mode`
 - **Type:** string (`"basic"` or `"advanced"`)
 - **Description:**  
-  Controls which list of colors is used for the color names.
+  Controls which list of colors is used for the hints.
 - **Values:**
   - `"basic"`: simple colors (`Red`, `Blue`, etc.).
   - `"advanced"`: fancy and varied colors (`Crimson`, `Indigo`, etc.).
@@ -52,24 +52,21 @@ Below is a full explanation of every configuration option you can use in `config
 ---
 
 ### 4. `mandala_style`
-- **Type:** string (`"random"` or `"geometric"`)
+- **Type:** string (`"random"`, `"geometric"` or `"easy_mandala"`)
 - **Description:**  
   Selects the mandala style:
   - `"random"`: random distributed motifs (flowers, circles, spirals, etc.).
   - `"geometric"`: classical, symmetric, radial mandalas.
+  - `"easy_mandala"`: centered, radial mandala with sectors/petals/stars and rim circles — similar to the photographed book examples, optimized for coloring-by-number.
 
 ---
 
 ### 5. `mandala_max_radius`
 - **Type:** decimal (e.g., `1.35`, `1.42`, `1.48`)
 - **Description:**  
-  Sets the maximum radius for the geometric mandala (only for `"geometric"` style).  
+  Sets the maximum radius for the geometric or easy mandala.  
   Higher values use more paper surface.  
   Recommended values: `1.35` (safe), up to `1.48` (test before printing).
-- **Values:**
-  - `1.35` (safe default)
-  - `1.42` (recommended for maximum size)
-  - Up to `1.48` (may touch paper edges)
 
 ---
 
@@ -84,15 +81,6 @@ If missing, the script will ask you for each parameter and generate the file.
 
 Open and edit `config.json` with any text editor (Notepad, VSCode, Nano, etc.).  
 Run the script again to use new settings.
-
----
-
-## Future Options (planned, not yet implemented)
-
-- `"output_path"`: custom output folder.
-- `"image_format"`: export as PNG/SVG as well as PDF.
-- `"min_motifs"` / `"max_motifs"`: control motif count per page.
-- `"seed"`: for reproducible random generation.
 
 ---
 

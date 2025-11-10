@@ -1,3 +1,4 @@
+# latex_tools.py (unchanged; included for completeness)
 import os
 import subprocess
 import shutil

@@ -1,7 +1,7 @@
 {
     "color_hint_mode": "number",
     "color_mode": "advanced",
-    "batch_count": 2,
-    "mandala_style": "geometric",
+    "batch_count": 10,
+    "mandala_style": "easy_mandala",
     "mandala_max_radius": 1.42
 }

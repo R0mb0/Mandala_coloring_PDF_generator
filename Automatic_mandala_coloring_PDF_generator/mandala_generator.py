@@ -1,3 +1,4 @@
+# mandala_generator.py
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.patches import Ellipse, Circle, Polygon
@@ -42,6 +43,9 @@ def next_number(used):
         n += 1
     return n
 
+# -------------------
+# Existing small-shape draw functions (unchanged)
+# -------------------
 def draw_flower(ax, center, r, lw, color_list=None, color_hint_mode="none", color_map=None):
     circle = Circle(center, r*0.18, edgecolor='black', facecolor='none', lw=lw)
     ax.add_patch(circle)
@@ -224,6 +228,111 @@ def draw_ray_mandala(ax, center, r, lw, color_list=None, color_hint_mode="none",
                 ha='center', va='center', weight='bold', zorder=10)
             txt.set_path_effects([path_effects.Stroke(linewidth=1.3, foreground='white'), path_effects.Normal()])
 
+# -------------------
+# New: easy_mandala centered radial mandala
+# -------------------
+def draw_easy_mandala(ax, center, r, lw, color_list=None, color_hint_mode="none", color_map=None,
+                      n_sectors=8, n_star_points=8, n_petals=16, outer_circles=16):
+    """
+    Creates a centered radial mandala similar to book examples:
+    - central polygon divided into sectors (numbered),
+    - an intermediate ring of petals/stars,
+    - outer small circles around the rim (numbered).
+    """
+    # Central polygon (regular) and radial divisions
+    theta = np.linspace(0, 2*np.pi, n_sectors, endpoint=False)
+    inner_radius = r * 0.28
+    poly_pts = [(center[0] + np.cos(t) * inner_radius, center[1] + np.sin(t) * inner_radius) for t in theta]
+    central_poly = Polygon(poly_pts, closed=True, edgecolor='black', facecolor='none', lw=lw)
+    ax.add_patch(central_poly)
+
+    # draw radial spokes dividing the polygon into sectors
+    for t in theta:
+        x0 = center[0]
+        y0 = center[1]
+        x1 = center[0] + np.cos(t) * inner_radius
+        y1 = center[1] + np.sin(t) * inner_radius
+        ax.plot([x0, x1], [y0, y1], color='black', lw=lw)
+
+    # Number the central sectors (placing numbers roughly in the middle of each wedge)
+    for i, t in enumerate(theta):
+        mid_angle = t + (2*np.pi / n_sectors) / 2.0
+        px = center[0] + np.cos(mid_angle) * (inner_radius * 0.6)
+        py = center[1] + np.sin(mid_angle) * (inner_radius * 0.6)
+        if color_list and color_hint_mode != "none":
+            color = np.random.choice(color_list)
+            if color_hint_mode == "name":
+                txt_hint = color
+            else:
+                if color not in color_map:
+                    color_map[color] = next_number(set(color_map.values()))
+                txt_hint = str(color_map[color])
+            txt = ax.text(px, py, txt_hint, fontsize=max(r*8, 8), ha='center', va='center', weight='bold', zorder=10)
+            txt.set_path_effects([path_effects.Stroke(linewidth=1.2, foreground='white'), path_effects.Normal()])
+
+    # Surrounding star/point shapes outside the central polygon
+    star_radius = inner_radius * 1.95
+    outer_star_radius = r * 0.60
+    for i, t in enumerate(np.linspace(0, 2*np.pi, n_star_points, endpoint=False)):
+        p0 = (center[0] + np.cos(t) * star_radius, center[1] + np.sin(t) * star_radius)
+        p1 = (center[0] + np.cos(t + 0.08) * outer_star_radius, center[1] + np.sin(t + 0.08) * outer_star_radius)
+        p2 = (center[0] + np.cos(t - 0.08) * outer_star_radius, center[1] + np.sin(t - 0.08) * outer_star_radius)
+        tri = Polygon([p0, p1, p2], closed=True, edgecolor='black', facecolor='none', lw=lw)
+        ax.add_patch(tri)
+
+    # Intermediate ring: petals (ellipses) arranged radially
+    petal_r = r * 0.48
+    petal_width = r * 0.28
+    petal_height = r * 0.58
+    petal_angles = np.linspace(0, 2*np.pi, n_petals, endpoint=False)
+    for ang in petal_angles:
+        cx = center[0] + np.cos(ang) * petal_r
+        cy = center[1] + np.sin(ang) * petal_r
+        petal = Ellipse((cx, cy), width=petal_width, height=petal_height, angle=np.degrees(ang),
+                        edgecolor='black', facecolor='none', lw=lw)
+        ax.add_patch(petal)
+
+    # Small circles on the outer rim, evenly spaced
+    rim_r = r * 0.87
+    circle_radius = r * 0.045
+    angles_circles = np.linspace(0, 2*np.pi, outer_circles, endpoint=False)
+    for ang in angles_circles:
+        cx = center[0] + np.cos(ang) * rim_r
+        cy = center[1] + np.sin(ang) * rim_r
+        circ = Circle((cx, cy), circle_radius, edgecolor='black', facecolor='none', lw=lw)
+        ax.add_patch(circ)
+        if color_list and color_hint_mode != "none":
+            color = np.random.choice(color_list)
+            if color_hint_mode == "name":
+                txt_hint = color
+            else:
+                if color not in color_map:
+                    color_map[color] = next_number(set(color_map.values()))
+                txt_hint = str(color_map[color])
+            txt = ax.text(cx, cy, txt_hint, fontsize=max(r*6, 7), ha='center', va='center', weight='bold', zorder=10)
+            txt.set_path_effects([path_effects.Stroke(linewidth=0.9, foreground='white'), path_effects.Normal()])
+
+    # Optional inner small circles (sparser labels)
+    inner_ring_r = r * 0.62
+    for ang in np.linspace(0, 2*np.pi, max(6, n_sectors*1), endpoint=False):
+        cx = center[0] + np.cos(ang) * inner_ring_r
+        cy = center[1] + np.sin(ang) * inner_ring_r
+        c = Circle((cx, cy), circle_radius*0.6, edgecolor='black', facecolor='none', lw=lw*0.9)
+        ax.add_patch(c)
+        if color_list and color_hint_mode != "none" and (np.random.rand() > 0.6):
+            color = np.random.choice(color_list)
+            if color_hint_mode == "name":
+                txt_hint = color
+            else:
+                if color not in color_map:
+                    color_map[color] = next_number(set(color_map.values()))
+                txt_hint = str(color_map[color])
+            txt = ax.text(cx, cy, txt_hint, fontsize=max(r*6, 7), ha='center', va='center', weight='bold', zorder=10)
+            txt.set_path_effects([path_effects.Stroke(linewidth=0.9, foreground='white'), path_effects.Normal()])
+
+# -------------------
+# geometric and random mandala functions unchanged (kept below)
+# -------------------
 def draw_geometric_mandala(ax, center, r_max, lw, color_list=None, color_hint_mode="none", color_map=None):
     levels = np.random.randint(4, 7)
     shapes_drawn = []
@@ -370,6 +479,21 @@ def generate_mandala_image(output_path, color_hint_mode="none", color_mode="adva
             ax, center, r_max, lw,
             color_list=color_list if color_hint_mode != "none" else None,
             color_hint_mode=color_hint_mode, color_map=color_map
+        )
+    elif mandala_style == "easy_mandala":
+        center = (0, 0)
+        r_max = mandala_max_radius
+        lw = np.random.uniform(1.6, 2.1)
+        # randomized parameters for variety
+        n_sectors = np.random.choice([6, 8, 9, 10])
+        n_star_points = n_sectors
+        n_petals = np.random.choice([12, 16, 20])
+        outer_circles = n_petals
+        draw_easy_mandala(
+            ax, center, r_max, lw,
+            color_list=color_list if color_hint_mode != "none" else None,
+            color_hint_mode=color_hint_mode, color_map=color_map,
+            n_sectors=n_sectors, n_star_points=n_star_points, n_petals=n_petals, outer_circles=outer_circles
         )
     else:
         min_elements = 14

@@ -1,3 +1,4 @@
+# main.py (updated prompts to include easy_mandala)
 import sys
 import os
 import subprocess
@@ -107,7 +108,7 @@ def get_next_pdf_filename(output_dir):
 def ask_config_interactive():
     print("\n--- MANUAL CONFIGURATION ---")
     print("Example configuration:")
-    print('{"color_hint_mode": "number", "color_mode": "advanced", "batch_count": 2, "mandala_style": "geometric", "mandala_max_radius": 1.42}\n')
+    print('{"color_hint_mode": "number", "color_mode": "advanced", "batch_count": 2, "mandala_style": "easy_mandala", "mandala_max_radius": 1.42}\n')
 
     color_hint_mode = input("How do you want coloring hints? [none/name/number]: ").strip().lower()
     if color_hint_mode not in ["none", "name", "number"]:
@@ -120,13 +121,13 @@ def ask_config_interactive():
     batch_count_input = input("How many PDFs to generate? (number, example: 2): ").strip()
     batch_count = int(batch_count_input) if batch_count_input.isdigit() else 1
 
-    mandala_style = input("Mandala style? [random/geometric] (example: geometric): ").strip().lower()
-    if mandala_style not in ["random", "geometric"]:
+    mandala_style = input("Mandala style? [random/geometric/easy_mandala] (example: easy_mandala): ").strip().lower()
+    if mandala_style not in ["random", "geometric", "easy_mandala"]:
         mandala_style = "random"
 
     mandala_max_radius = 1.35
-    if mandala_style == "geometric":
-        radius_input = input("Max radius for geometric mandala? (example: 1.42, recommended: 1.35-1.48): ").strip()
+    if mandala_style == "geometric" or mandala_style == "easy_mandala":
+        radius_input = input("Max radius for geometric/easy mandala? (example: 1.42, recommended: 1.35-1.48): ").strip()
         try:
             mandala_max_radius = float(radius_input)
         except Exception:
